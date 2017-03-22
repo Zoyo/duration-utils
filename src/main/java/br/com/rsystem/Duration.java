@@ -1,14 +1,18 @@
 package br.com.rsystem;
 
+import static java.lang.String.format;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class Duration {
 	private static final String DURATION_PATTERN = "\\d+[a-z]";
+	private final String originalDuration;
 	private final String duration;
 	private final Map<Units, Long> unitsValues;
 	private final Long totalMilliseconds;
@@ -42,8 +46,8 @@ public final class Duration {
 		}
 		
 		this.totalMilliseconds = msAcumulated;
-		
-		this.duration = textDuration;
+		this.originalDuration = textDuration;
+		this.duration = this.normalizeDuration(this.totalMilliseconds);
 	}
 	
 	/**
@@ -51,23 +55,14 @@ public final class Duration {
 	 * @param totalMilliseconds
 	 */
 	public Duration(Long totalMilliseconds) {
-		this.unitsValues = new LinkedHashMap<Units, Long>();
 		this.totalMilliseconds = totalMilliseconds;
-		
-		Long year = this.totalMilliseconds / Units.YEAR.getMillisecondsFactor();
-		Long month = this.totalMilliseconds / Units.MONTH.getMillisecondsFactor();
-		Long week = this.totalMilliseconds / Units.WEEK.getMillisecondsFactor();
-		Long day = this.totalMilliseconds / Units.DAY.getMillisecondsFactor();
-		Long hour = this.totalMilliseconds / Units.HOUR.getMillisecondsFactor();
-		Long minute = this.totalMilliseconds / Units.MINUTES.getMillisecondsFactor();
-		Long second = this.totalMilliseconds / Units.SECONDS.getMillisecondsFactor();
-		
-		
-		this.duration = "";
+		this.originalDuration = "";
+		this.duration = this.normalizeDuration(this.totalMilliseconds);
+		this.unitsValues = null;
 	}
 	
 	public Long toSeconds() {
-		return this.totalMilliseconds / Units.SECONDS.getMillisecondsFactor();
+		return this.totalMilliseconds / Units.SECOND.getMillisecondsFactor();
 	}
 	
 	public Duration add(Duration duration) {
@@ -108,15 +103,39 @@ public final class Duration {
 		return new Long(unitFull.replaceAll("\\D", ""));
 	}
 	
-	private String normalize() {
-		// TODO
-		return null;
+	private String normalizeDuration(Long milliseconds) {
+		long weekInMillis = TimeUnit.MILLISECONDS.convert(7, TimeUnit.DAYS);
+		long dayInMillis = TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
+		long hourInMillis = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS);
+		long minuteInMillis = TimeUnit.MILLISECONDS.convert(60, TimeUnit.SECONDS);
+		long secondsInMillis = TimeUnit.MILLISECONDS.convert(1, TimeUnit.SECONDS);
+		
+		long totalWeeks   = (milliseconds / weekInMillis);
+		long totalDays    = (milliseconds % weekInMillis) / dayInMillis;
+		long totalHours   = ((milliseconds % weekInMillis) % dayInMillis) / hourInMillis;
+		long totalMinutes = (((milliseconds % weekInMillis) % dayInMillis) % hourInMillis) / minuteInMillis;
+		long totalSeconds = ((((milliseconds % weekInMillis) % dayInMillis) % hourInMillis) % minuteInMillis) / secondsInMillis;
+		long totalMillis  = (((((milliseconds % weekInMillis) % dayInMillis) % hourInMillis) % minuteInMillis) % secondsInMillis);
+		
+		StringBuilder durationText = new StringBuilder();
+		
+		if(totalWeeks > 0) {
+			durationText.append(totalWeeks).append(Units.WEEK.getUnitCode().toLowerCase());
+		}
+		
+		if(totalDays > 0) {
+			durationText.append(totalDays).append(Units.DAY.getUnitCode().toLowerCase());
+		}
+		
+		// TODO continuar calculando as outras unidades.
+		
+		return durationText.toString();
 	}
 	
 	// **************************
 	// DEFAULT GET/SET
-	public String getDuration() {
-		return this.duration;
+	public String getOriginalDuration() {
+		return this.originalDuration;
 	}
 	
 	public Long getTotalMilliseconds() {
