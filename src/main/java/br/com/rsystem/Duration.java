@@ -1,5 +1,7 @@
 package br.com.rsystem;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -90,6 +92,37 @@ public final class Duration {
 	 */
 	public Duration add(Long milliseconds) {
 		return new Duration(milliseconds).add(this);
+	}
+	
+	/**
+	 * @return A date calculated from now + Duration
+	 */
+	public Calendar getDateFromDuration() {
+		Calendar nowPlusDuration = Calendar.getInstance();
+		nowPlusDuration.add(Calendar.MILLISECOND, this.totalMilliseconds.intValue());
+		return nowPlusDuration;
+	}
+	
+	/**
+	 * @param date Base date to plus this duration.
+	 * @return Date specified plus this duration.
+	 */
+	public Calendar plusDurationOnDate(Calendar date) {
+		Calendar plusDuration = (Calendar) date.clone();
+		plusDuration.add(Calendar.MILLISECOND, this.totalMilliseconds.intValue());
+		return plusDuration;
+	}
+	
+	/**
+	 * @param date Base date to plus this duration.
+	 * @return Date specified plus this duration.
+	 */
+	public Calendar plusDurationOnDate(Date date) {
+		// FIXME change return to date
+		Calendar plusDuration = Calendar.getInstance();
+		plusDuration.setTime(date);
+		plusDuration.add(Calendar.MILLISECOND, this.totalMilliseconds.intValue());
+		return plusDuration;
 	}
 
 	// -------------------------------------------------------------------------
