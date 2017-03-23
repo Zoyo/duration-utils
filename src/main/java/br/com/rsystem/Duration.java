@@ -1,12 +1,10 @@
 package br.com.rsystem;
 
-import static java.lang.String.format;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,74 +14,84 @@ public final class Duration {
 	private final String duration;
 	private final Map<Units, Long> unitsValues;
 	private final Long totalMilliseconds;
+
 	
+	// -------------------------------------------------------------------------
+	// CONSTRUCTORS
+	// -------------------------------------------------------------------------
 	/**
 	 * Create a duration form a string.
+	 * 
 	 * @param textDuration String represents a duration
 	 * 		  ex: '1w 3d 15m' means 1 week 3 days and 15 minutes.
 	 */
 	public Duration(String textDuration) {
 		this.unitsValues = new LinkedHashMap<Units, Long>(Units.values().length);
-		for (Units u : Units.values()) {
-			unitsValues.put(u, 0L);
-		}
-		
-		Pattern compile = Pattern.compile(DURATION_PATTERN);
-		Matcher matcher = compile.matcher(textDuration);
-		
-		while(matcher.find()) {
-			String group = matcher.group();
-			Units unit = Units.getFromPredicate(extractUnitSymbol(group));
-			Long value = extractValue(group) + unitsValues.get(unit);
-			
-			unitsValues.put(unit, value);
-		}
-		
-		Long msAcumulated = 0L;
-		Set<Entry<Units,Long>> entrySet = unitsValues.entrySet();
-		for (Entry<Units, Long> e : entrySet) {
-			msAcumulated += e.getKey().getMillisecondsFactor() * e.getValue();
-		}
-		
-		this.totalMilliseconds = msAcumulated;
+		this.totalMilliseconds = setup(textDuration);
 		this.originalDuration = textDuration;
 		this.duration = this.normalizeDuration(this.totalMilliseconds);
 	}
-	
+
 	/**
 	 * Create duration from total milliseconds informed;
+	 * 
 	 * @param totalMilliseconds
 	 */
 	public Duration(Long totalMilliseconds) {
 		this.totalMilliseconds = totalMilliseconds;
-		this.originalDuration = "";
+		this.originalDuration = this.normalizeDuration(this.totalMilliseconds);
 		this.duration = this.normalizeDuration(this.totalMilliseconds);
-		this.unitsValues = null;
+		this.unitsValues = new LinkedHashMap<Units, Long>(Units.values().length);
+		setup(this.duration);
 	}
 	
+	/**
+	 * Create a duration from the total time of the unit specified.
+	 * 
+	 * @param totalTime Total time of duration
+	 * @param unit Unit of total time.
+	 */
+	public Duration(Long totalTime, Units unit) {
+		this(totalTime * unit.getMillisecondsFactor());
+	}
+	// -------------------------------------------------------------------------
+	// PUBLIC METHODS
+	// -------------------------------------------------------------------------
+	/**
+	 * Create a new duration that hold the sum of <code>duration</code> parameter and this. 
+	 * @param duration Duration to sum on this.
+	 * @return new Duration with de sum between <code>duration</code> parameter and this.
+	 */
+	public Duration add(Duration duration) {
+		Long ms = duration.getTotalMilliseconds() + this.totalMilliseconds;
+		return new Duration(ms);
+	}
+	
+	/**
+	 * Create a new duration that hold the sum of <code>duration</code> parameter and this. 
+	 * @param duration Duration as string like <i>'3d 5h'</i>.
+	 * @return new Duration with de sum between <code>duration</code> parameter and this.
+	 */
+	public Duration add(String duration) {
+		return new Duration(duration).add(this);
+	}
+	
+	/**
+	 * @return Total seconds containing in this.
+	 */
 	public Long toSeconds() {
 		return this.totalMilliseconds / Units.SECOND.getMillisecondsFactor();
 	}
-	
-	public Duration add(Duration duration) {
-		// TODO
-		return null;
-	}
-	
-	public Duration add(String duration) {
-		// TODO
-		return null;
-	}
 
 	/**
-	 * Create a new Duration
-	 * @param duration
-	 * @return
+	 * Create a new duration that hold the sum of <code>duration</code> parameter and this.
+	 * @param milliseconds Duration as milliseconds.
+	 * @return new Duration with de sum between <code>duration</code> parameter and this.
 	 */
-	public Duration setDuration(String duration) {
-		// FIXME change (or remove) for more useful things
-		return new Duration(duration);
+	public Duration add(Long milliseconds) {
+		return new Duration(milliseconds).add(this);
 	}
+
 	// -------------------------------------------------------------------------
 	// PRIVATE METHODS
 	// -------------------------------------------------------------------------
@@ -115,29 +123,86 @@ public final class Duration {
 		long totalHours   = ((milliseconds % weekInMillis) % dayInMillis) / hourInMillis;
 		long totalMinutes = (((milliseconds % weekInMillis) % dayInMillis) % hourInMillis) / minuteInMillis;
 		long totalSeconds = ((((milliseconds % weekInMillis) % dayInMillis) % hourInMillis) % minuteInMillis) / secondsInMillis;
-		long totalMillis  = (((((milliseconds % weekInMillis) % dayInMillis) % hourInMillis) % minuteInMillis) % secondsInMillis);
+//		long totalMillis  = (((((milliseconds % weekInMillis) % dayInMillis) % hourInMillis) % minuteInMillis) % secondsInMillis);
 		
 		StringBuilder durationText = new StringBuilder();
 		
 		if(totalWeeks > 0) {
-			durationText.append(totalWeeks).append(Units.WEEK.getUnitCode().toLowerCase());
+			durationText.append(totalWeeks).append(Units.WEEK.getUnitCode().toLowerCase()).append(" ");
 		}
 		
 		if(totalDays > 0) {
-			durationText.append(totalDays).append(Units.DAY.getUnitCode().toLowerCase());
+			durationText.append(totalDays).append(Units.DAY.getUnitCode().toLowerCase()).append(" ");
 		}
 		
-		// TODO continuar calculando as outras unidades.
+		if(totalHours > 0) {
+			durationText.append(totalHours).append(Units.HOUR.getUnitCode().toLowerCase()).append(" ");
+		}
 		
-		return durationText.toString();
+		if(totalMinutes > 0) {
+			durationText.append(totalMinutes).append(Units.MINUTE.getUnitCode().toLowerCase()).append(" ");
+		}
+		
+		if(totalSeconds > 0) {
+			durationText.append(totalSeconds).append(Units.SECOND.getUnitCode().toLowerCase()).append(" ");
+		}
+		
+		return durationText.toString().trim();
+	}
+	
+	private Long setup(String textDuration) {
+		for (Units u : Units.values()) {
+			this.unitsValues.put(u, 0L);
+		}
+
+		Pattern compile = Pattern.compile(DURATION_PATTERN);
+		Matcher matcher = compile.matcher(textDuration);
+		
+		while(matcher.find()) {
+			String group = matcher.group();
+			Units unit = Units.getFromPredicate(extractUnitSymbol(group));
+			Long value = extractValue(group) + unitsValues.get(unit);
+			
+			this.unitsValues.put(unit, value);
+		}
+		
+		Long msAcumulated = 0L;
+		Set<Entry<Units,Long>> entrySet = unitsValues.entrySet();
+		for (Entry<Units, Long> e : entrySet) {
+			msAcumulated += e.getKey().getMillisecondsFactor() * e.getValue();
+		}
+		return msAcumulated;
 	}
 	
 	// **************************
 	// DEFAULT GET/SET
+	/**
+	 * When duration is created with string constructor, the original
+	 * string is saved on this attribute then this one is normalized.<br>
+	 * Ex.: new Duration("1w 14d") has your duration normalized to "3w".<br><br>
+	 * <b>Obs.:</b> When duration is create with milliseconds constructor,
+	 * 			    origialDuration and duration are always the same. 
+	 * @return Original duration
+	 */
 	public String getOriginalDuration() {
 		return this.originalDuration;
 	}
 	
+	/**
+	 * When duration is created with string constructor, the original
+	 * string is saved on <code>orignalDuration</code> then this one is normalized.<br>
+	 * Ex.: new Duration("1w 14d") has your duration normalized to "3w".<br><br>
+	 * <b>Obs.:</b> When duration is create with milliseconds constructor,
+	 * 			    origialDuration and duration are always the same. 
+	 * @return Return string duration already normalized.
+	 */
+	public String getDuration() {
+		return duration;
+	}
+	
+	/**
+	 * @return The total of milliseconds present in this duration.
+	 */
 	public Long getTotalMilliseconds() {
 		return this.totalMilliseconds;
 	}
