@@ -1,14 +1,14 @@
 package br.com.rsystem;
 
 public enum Units {
-//	MILLISECONDS("L", (1)),
-	SECOND     ("S", (1 * 1000)),
-	MINUTE     ("M", (1 * 1000 * 60)),
-	HOUR        ("H", (1 * 1000 * 60 * 60)),
-	DAY         ("D", (1 * 1000 * 60 * 60 * 24)),
-	WEEK        ("W", (1 * 1000 * 60 * 60 * 24 * 7));
+//	YEAR        ("Y", (1 * 1000 * 60 * 60 * 24 * 365)),
 //	MONTH       ("T", (1 * 1000 * 60 * 60 * 24 * 30)),
-//	YEAR        ("Y", (1 * 1000 * 60 * 60 * 24 * 365));
+	WEEK        ("W", (1 * 1000 * 60 * 60 * 24 * 7)),
+	DAY         ("D", (1 * 1000 * 60 * 60 * 24)),
+	HOUR        ("H", (1 * 1000 * 60 * 60)),
+	MINUTE      ("M", (1 * 1000 * 60)),
+	SECOND      ("S", (1 * 1000));
+//	MILLISECONDS("L", (1));
 	
 	private String unitCode;
 	private Integer millisecondsFactor;

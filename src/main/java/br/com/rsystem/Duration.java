@@ -104,21 +104,22 @@ public final class Duration {
 	}
 	
 	/**
+	 * Calculate what is the date after plus this duration.
 	 * @param date Base date to plus this duration.
 	 * @return Date specified plus this duration.
 	 */
-	public Calendar plusDurationOnDate(Calendar date) {
+	public Calendar calculateDate(Calendar date) {
 		Calendar plusDuration = (Calendar) date.clone();
 		plusDuration.add(Calendar.MILLISECOND, this.totalMilliseconds.intValue());
 		return plusDuration;
 	}
 	
 	/**
+	 * Calculate what is the date after plus this duration.
 	 * @param date Base date to plus this duration.
 	 * @return Date specified plus this duration.
 	 */
-	public Calendar plusDurationOnDate(Date date) {
-		// FIXME change return to date
+	public Calendar calculateDate(Date date) {
 		Calendar plusDuration = Calendar.getInstance();
 		plusDuration.setTime(date);
 		plusDuration.add(Calendar.MILLISECOND, this.totalMilliseconds.intValue());

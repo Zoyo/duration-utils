@@ -2,6 +2,10 @@ package text2period;
 
 import static org.junit.Assert.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import org.junit.Test;
 
 import br.com.rsystem.Duration;
@@ -40,5 +44,15 @@ public class ParseTest {
 	public void shouldCreateDurationOnUnitSpecified() throws Exception {
 		Duration duration = new Duration(24L, Units.HOUR);
 		assertEquals("Duration from unit emits a problem", "1d", duration.getDuration());
+	}
+	
+	@Test
+	public void shoulAddDurationOnDate() throws Exception {
+		Duration duration = new Duration("1d");
+		Date march24_2017 = new Date(1490358859976L);
+		Calendar calculatedDate = duration.calculateDate(march24_2017);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		
+		assertEquals("Add duration emits a problem", "20170325", sdf.format(calculatedDate.getTime()));
 	}
 }
