@@ -1,4 +1,3 @@
-// TODO Mudar os métodos aque trablham com calendar para considerar dias corridos e dias úteis.
 package br.com.rsystem;
 
 import java.util.Calendar;
@@ -53,7 +52,11 @@ public final class Duration {
 	}
 	
 	public Duration(Long totalTime, Units unit) {
-		this(totalTime * unit.getInMillis(new ConfigDuration()));
+		this(totalTime, unit, new ConfigDuration());
+	}
+	
+	public Duration(Long totalTime, Units unit, ConfigDuration config) {
+		this(totalTime * unit.getInMillis(config));
 	}
 	
 	// **************************************************
@@ -61,19 +64,19 @@ public final class Duration {
 	// **************************************************
 	public Duration add(Duration duration) {
 		Long ms = duration.getTotalMilliseconds() + this.totalMilliseconds;
-		return new Duration(ms);
+		return new Duration(ms, this.config);
 	}
 	
 	public Duration add(String duration) {
-		return new Duration(duration).add(this);
+		return new Duration(duration, this.config).add(this);
+	}
+	
+	public Duration add(Long milliseconds) {
+		return new Duration(milliseconds, this.config).add(this);
 	}
 	
 	public Long toSeconds() {
 		return this.totalMilliseconds / Units.SECOND.getInMillis(this.config);
-	}
-
-	public Duration add(Long milliseconds) {
-		return new Duration(milliseconds).add(this);
 	}
 	
 	public Calendar getDateFromDuration() {
