@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import br.com.rsystem.Duration;
 import br.com.rsystem.Units;
+import br.com.rsystem.config.DurationSymbols;
 
 public class ParseTest {
 	@Test
@@ -54,5 +55,13 @@ public class ParseTest {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		
 		assertEquals("Add duration emits a problem", "20170325", sdf.format(calculatedDate.getTime()));
+	}
+	
+	@Test
+	public void onlyDebugPurpose() throws Exception {
+		DurationSymbols durationSymbols = new DurationSymbols();
+		DurationSymbols durationSymbols2 = new DurationSymbols("ano*mes semana*dia*hora/minuto-segundo,milli");
+		System.out.println(durationSymbols);
+		System.out.println(durationSymbols2);
 	}
 }

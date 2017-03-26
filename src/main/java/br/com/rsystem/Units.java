@@ -1,38 +1,69 @@
 package br.com.rsystem;
 
-public enum Units {
-//	YEAR        ("Y", (1 * 1000 * 60 * 60 * 24 * 365)),
-//	MONTH       ("T", (1 * 1000 * 60 * 60 * 24 * 30)),
-	WEEK        ("W", (1 * 1000 * 60 * 60 * 24 * 7)),
-	DAY         ("D", (1 * 1000 * 60 * 60 * 24)),
-	HOUR        ("H", (1 * 1000 * 60 * 60)),
-	MINUTE      ("M", (1 * 1000 * 60)),
-	SECOND      ("S", (1 * 1000));
-//	MILLISECONDS("L", (1));
-	
-	private String unitCode;
-	private Integer millisecondsFactor;
+import java.util.concurrent.TimeUnit;
 
-	private Units(String unitCode, Integer millisecondsFactor) {
-		this.unitCode = unitCode;
-		this.millisecondsFactor = millisecondsFactor;
-	}
-	
-	public String getUnitCode() {
-		return unitCode;
-	}
-	
-	public Integer getMillisecondsFactor() {
-		return millisecondsFactor;
-	}
-	
-	public static Units getFromPredicate(String predicate) {
-		for (Units u : values()) {
-			if(u.getUnitCode().equalsIgnoreCase(predicate)) {
-				return u;
-			}
+import br.com.rsystem.config.ConfigDuration;
+import br.com.rsystem.config.defaults.UnitBitValues;
+
+public enum Units {
+	YEAR(UnitBitValues.YEAR_MAX_BIT) {
+		@Override
+		Long getInMillis(final ConfigDuration config) {
+			return TimeUnit.MILLISECONDS.convert((config.getHoursInDay() * config.getDaysInYear()), TimeUnit.HOURS);
 		}
-		
-		return null;
+	},
+	MONTH(UnitBitValues.MONTH_MAX_BIT) {
+		@Override
+		Long getInMillis(final ConfigDuration config) {
+			return TimeUnit.MILLISECONDS.convert((config.getHoursInDay() * config.getDaysInMonth()), TimeUnit.HOURS);
+		}
+	},
+	WEEK(UnitBitValues.WEEK_MAX_BIT) {
+		@Override
+		Long getInMillis(final ConfigDuration config) {
+			return TimeUnit.MILLISECONDS.convert((config.getHoursInDay() * config.getDaysInWeek()), TimeUnit.HOURS);
+		}
+	},
+	DAY(UnitBitValues.DAY_MAX_BIT) {
+		@Override
+		Long getInMillis(final ConfigDuration config) {
+			return TimeUnit.MILLISECONDS.convert(config.getHoursInDay(), TimeUnit.HOURS);
+		}
+	},
+	HOUR(UnitBitValues.HOUR_MAX_BIT) {
+		@Override
+		Long getInMillis(final ConfigDuration config) {
+			return TimeUnit.MILLISECONDS.convert(1L, TimeUnit.HOURS);
+		}
+	},
+	MINUTE(UnitBitValues.MINUTE_MAX_BIT) {
+		@Override
+		Long getInMillis(final ConfigDuration config) {
+			return TimeUnit.MILLISECONDS.convert(1L, TimeUnit.MINUTES);
+		}
+	},
+	SECOND(UnitBitValues.SECOND_MAX_BIT) {
+		@Override
+		Long getInMillis(final ConfigDuration config) {
+			return TimeUnit.MILLISECONDS.convert(1L, TimeUnit.SECONDS);
+		}
+	},
+	MILLISECOND(UnitBitValues.MILLISECOND_MAX_BIT) {
+		@Override
+		Long getInMillis(final ConfigDuration config) {
+			return 1L;
+		}
+	};
+	
+	private int valueForMaxUnit;
+	
+	private Units(int valueForMaxUnit) {
+		this.valueForMaxUnit = valueForMaxUnit;
 	}
+	
+	public int valueForMaxUnit() {
+		return this.valueForMaxUnit;
+	}
+
+	abstract Long getInMillis(ConfigDuration config);
 }
