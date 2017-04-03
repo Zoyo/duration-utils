@@ -86,6 +86,15 @@ public class ParseTest {
 		assertEquals("Load days in week emits a problem", config.getDaysInWeek(), 3);
 		assertEquals("Load hour in day emits a problem", config.getHoursInDay(), 8);
 		assertEquals("Load text separator emits a problem", config.getTextSeparator(), "-");
+		
+		assertTrue("Load unit year emits a problem", config.getUseUnits().contains(Units.YEAR));
+		assertFalse("Load unit month emits a problem", config.getUseUnits().contains(Units.MONTH));
+		assertTrue("Load unit week emits a problem", config.getUseUnits().contains(Units.WEEK));
+		assertFalse("Load unit day emits a problem", config.getUseUnits().contains(Units.DAY));
+		assertTrue("Load unit hour emits a problem", config.getUseUnits().contains(Units.HOUR));
+		assertFalse("Load unit minute emits a problem", config.getUseUnits().contains(Units.MINUTE));
+		assertTrue("Load unit second emits a problem", config.getUseUnits().contains(Units.SECOND));
+		assertFalse("Load unit millisecond emits a problem", config.getUseUnits().contains(Units.MILLISECOND));
 	}
 	
 	@Test

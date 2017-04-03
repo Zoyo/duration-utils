@@ -4,6 +4,7 @@ import static br.com.rsystem.utils.DurationUtils.ensureGreaterThanZero;
 import static br.com.rsystem.utils.DurationUtils.ensureObjectNotNull;
 
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
@@ -20,7 +21,7 @@ public class ConfigDurationBuilder {
 	private int daysInWeek = ConfigDefaultValues.DAYS_IN_WEEK;
 	private int hoursInDay = ConfigDefaultValues.HOURS_IN_DAY;
 	private String textSeparator = ConfigDefaultValues.TEXT_SEPARATOR;
-	private Set<Units> availableUnits = ConfigDefaultValues.USE_UNITS;
+	private Set<Units> useUnits = new HashSet<Units>();
 	private DurationSymbols symbols;
 
 	public ConfigDurationBuilder withDaysInYear(int daysInYear) throws IllegalArgumentException {
@@ -67,7 +68,7 @@ public class ConfigDurationBuilder {
 	public ConfigDurationBuilder addUnits(Units... useUnits) throws IllegalArgumentException {
 		for (Units u : useUnits) {
 			ensureObjectNotNull(u, "Unit to use");
-			this.availableUnits.add(u);
+			this.useUnits.add(u);
 		}
 		
 		return this;
@@ -115,6 +116,6 @@ public class ConfigDurationBuilder {
 						this.hoursInDay,
 						this.textSeparator,
 						this.symbols,
-						this.availableUnits);
+						this.useUnits.isEmpty() ? ConfigDefaultValues.USE_UNITS : this.useUnits);
 	}
 }

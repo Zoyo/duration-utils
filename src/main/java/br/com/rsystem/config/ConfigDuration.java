@@ -1,5 +1,6 @@
 package br.com.rsystem.config;
 
+import java.util.Collections;
 import java.util.Set;
 
 import br.com.rsystem.Units;
@@ -11,7 +12,7 @@ public final class ConfigDuration {
 	private int daysInWeek;
 	private int hoursInDay;
 	private String textSeparator;
-	private Set<Units> availableUnits;
+	private Set<Units> useUnits;
 	private DurationSymbols symbols;
 	
 	// **************************************************
@@ -25,14 +26,14 @@ public final class ConfigDuration {
 		this(daysInYear, daysInMonth, daysInWeek, hoursInDay, textSeparator, new DurationSymbols(), ConfigDefaultValues.USE_UNITS);
 	}
 	
-	public ConfigDuration(int daysInYear, int daysInMonth, int daysInWeek, int hoursInDay, String textSeparator, DurationSymbols symbols, Set<Units> availableUnits) {
+	public ConfigDuration(int daysInYear, int daysInMonth, int daysInWeek, int hoursInDay, String textSeparator, DurationSymbols symbols, Set<Units> useUnits) {
 		this.daysInYear = daysInYear;
 		this.daysInMonth = daysInMonth;
 		this.daysInWeek = daysInWeek;
 		this.hoursInDay = hoursInDay;
 		this.textSeparator = textSeparator;
 		this.symbols = symbols;
-		this.availableUnits = availableUnits;
+		this.useUnits = useUnits;
 	}
 	
 	// **************************************************
@@ -48,7 +49,7 @@ public final class ConfigDuration {
 
 	public int getMaxUnit() {
 		int maxUnit = 0;
-		for(Units u : this.availableUnits) {
+		for(Units u : this.useUnits) {
 			maxUnit |= u.bitCode();
 		}
 		return maxUnit;
@@ -61,24 +62,12 @@ public final class ConfigDuration {
 		return daysInYear;
 	}
 
-	public void setDaysInYear(int daysInYear) {
-		this.daysInYear = daysInYear;
-	}
-
 	public int getDaysInMonth() {
 		return daysInMonth;
 	}
 
-	public void setDaysInMonth(int daysInMonth) {
-		this.daysInMonth = daysInMonth;
-	}
-
 	public int getDaysInWeek() {
 		return daysInWeek;
-	}
-
-	public void setDaysInWeek(int daysInWeek) {
-		this.daysInWeek = daysInWeek;
 	}
 
 	public int getHoursInDay() {
@@ -89,17 +78,14 @@ public final class ConfigDuration {
 		return textSeparator;
 	}
 	
-	public void setHoursInDay(int hoursInDay) {
-		this.hoursInDay = hoursInDay;
-	}
-
 	public DurationSymbols getSymbols() {
 		return symbols;
 	}
 
-	public void setSymbols(DurationSymbols symbols) {
-		this.symbols = symbols;
+	public Set<Units> getUseUnits() {
+		return Collections.unmodifiableSet(useUnits);
 	}
+	
 	// **************************************************
 	// hashCode, equals and toString
 	// **************************************************
