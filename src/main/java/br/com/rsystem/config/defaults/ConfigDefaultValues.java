@@ -1,5 +1,11 @@
 package br.com.rsystem.config.defaults;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import br.com.rsystem.Units;
+
 public final class ConfigDefaultValues {
 	public static final int DAYS_IN_YEAR            = 365;
 	public static final int DAYS_IN_MONTH           = 30;
@@ -19,4 +25,7 @@ public final class ConfigDefaultValues {
 	public static final String MILLISECOND_SYMBOL   = "ms";
 	
 	public static final String TEXT_SEPARATOR = " ";
-}
+	
+	public static final Set<Units> USE_UNITS = new HashSet<Units>(Arrays.asList(Units.WEEK, Units.DAY, Units.HOUR, Units.MINUTE, Units.SECOND));
+	public static final String USE_UNITS_STR = "WEEK, DAY, HOUR, MINUTE, SECOND";
+;}

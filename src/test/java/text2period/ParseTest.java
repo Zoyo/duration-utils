@@ -6,10 +6,14 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import br.com.rsystem.Duration;
 import br.com.rsystem.Units;
+import br.com.rsystem.builders.ConfigDurationBuilder;
+import br.com.rsystem.builders.DurationSymbolBuilder;
+import br.com.rsystem.config.ConfigDuration;
 import br.com.rsystem.config.DurationSymbols;
 
 public class ParseTest {
@@ -58,6 +62,34 @@ public class ParseTest {
 	}
 	
 	@Test
+	public void shouldLoadDurationSymbolFromConfigFile() throws Exception {
+		DurationSymbolBuilder builder = new DurationSymbolBuilder();
+		DurationSymbols symbols = builder.loadFromFile("configTest.properties").build();
+		
+		assertEquals("Load year symbol emits a problem", symbols.getYear(), "sYear");
+		assertEquals("Load month symbol emits a problem", symbols.getMonth(), "sMonth");
+		assertEquals("Load week symbol emits a problem", symbols.getWeek(), "sWeek");
+		assertEquals("Load day symbol emits a problem", symbols.getDay(), "sDay");
+		assertEquals("Load hour symbol emits a problem", symbols.getHour(), "sHour");
+		assertEquals("Load minute symbol emits a problem", symbols.getMinute(), "sMinute");
+		assertEquals("Load second symbol emits a problem", symbols.getSecond(), "sSecond");
+		assertEquals("Load millisecond symbol emits a problem", symbols.getMillisecond(), "sMillisecond");
+	}
+	
+	@Test
+	public void shouldLoadConfigDurationFromConfigFile() throws Exception {
+		ConfigDurationBuilder builder = new ConfigDurationBuilder();
+		ConfigDuration config = builder.loadFromFile("configTest.properties").build();
+		
+		assertEquals("Load days in year emits a problem", config.getDaysInYear(), 360);
+		assertEquals("Load days in month emits a problem", config.getDaysInMonth(), 25);
+		assertEquals("Load days in week emits a problem", config.getDaysInWeek(), 3);
+		assertEquals("Load hour in day emits a problem", config.getHoursInDay(), 8);
+		assertEquals("Load text separator emits a problem", config.getTextSeparator(), "-");
+	}
+	
+	@Test
+	@Ignore
 	public void onlyDebugPurpose() throws Exception {
 		DurationSymbols durationSymbols = new DurationSymbols();
 		DurationSymbols durationSymbols2 = new DurationSymbols("ano*mes semana*dia*hora/minuto-segundo,milli");

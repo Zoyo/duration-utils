@@ -1,5 +1,7 @@
 package br.com.rsystem.config;
 
+import java.util.Set;
+
 import br.com.rsystem.Units;
 import br.com.rsystem.config.defaults.ConfigDefaultValues;
 
@@ -9,28 +11,28 @@ public final class ConfigDuration {
 	private int daysInWeek;
 	private int hoursInDay;
 	private String textSeparator;
-	private Units maxUnit;
+	private Set<Units> availableUnits;
 	private DurationSymbols symbols;
 	
 	// **************************************************
 	// Constructors
 	// **************************************************
 	public ConfigDuration() {
-		this(ConfigDefaultValues.DAYS_IN_YEAR, ConfigDefaultValues.DAYS_IN_MONTH, ConfigDefaultValues.DAYS_IN_WEEK, ConfigDefaultValues.HOURS_IN_DAY, ConfigDefaultValues.TEXT_SEPARATOR, new DurationSymbols(), Units.WEEK);
+		this(ConfigDefaultValues.DAYS_IN_YEAR, ConfigDefaultValues.DAYS_IN_MONTH, ConfigDefaultValues.DAYS_IN_WEEK, ConfigDefaultValues.HOURS_IN_DAY, ConfigDefaultValues.TEXT_SEPARATOR, new DurationSymbols(), ConfigDefaultValues.USE_UNITS);
 	}
 	
 	public ConfigDuration(int daysInYear, int daysInMonth, int daysInWeek, int hoursInDay, String textSeparator) {
-		this(daysInYear, daysInMonth, daysInWeek, hoursInDay, textSeparator, new DurationSymbols(), Units.YEAR);
+		this(daysInYear, daysInMonth, daysInWeek, hoursInDay, textSeparator, new DurationSymbols(), ConfigDefaultValues.USE_UNITS);
 	}
 	
-	public ConfigDuration(int daysInYear, int daysInMonth, int daysInWeek, int hoursInDay, String textSeparator, DurationSymbols symbols, Units maxUnit) {
+	public ConfigDuration(int daysInYear, int daysInMonth, int daysInWeek, int hoursInDay, String textSeparator, DurationSymbols symbols, Set<Units> availableUnits) {
 		this.daysInYear = daysInYear;
 		this.daysInMonth = daysInMonth;
 		this.daysInWeek = daysInWeek;
 		this.hoursInDay = hoursInDay;
 		this.textSeparator = textSeparator;
 		this.symbols = symbols;
-		this.maxUnit = maxUnit;
+		this.availableUnits = availableUnits;
 	}
 	
 	// **************************************************
@@ -43,7 +45,15 @@ public final class ConfigDuration {
 	public Units getUnitFromSymbol(String symbol) {
 		return this.symbols.getUnitFromSymbol(symbol);
 	}
-	
+
+	public int getMaxUnit() {
+		int maxUnit = 0;
+		for(Units u : this.availableUnits) {
+			maxUnit |= u.bitCode();
+		}
+		return maxUnit;
+	}
+
 	// **************************************************
 	// Default get/set
 	// **************************************************
@@ -89,10 +99,6 @@ public final class ConfigDuration {
 
 	public void setSymbols(DurationSymbols symbols) {
 		this.symbols = symbols;
-	}
-
-	public Units getMaxUnit() {
-		return maxUnit;
 	}
 	// **************************************************
 	// hashCode, equals and toString

@@ -9,6 +9,7 @@ import br.com.rsystem.Units;
 import br.com.rsystem.config.defaults.ConfigDefaultValues;
 
 public final class DurationSymbols {
+	public static final String SYMBOL_SEPARATOR_PATTERN = "[-_/,* ]";
 	private static final int MAX_SYMBOLS = 8;
 	
 	private Map<Units, String> symbols;
@@ -29,7 +30,7 @@ public final class DurationSymbols {
 		
 		this.setDefaultSymbols();
 		this.updateSymbols(extractSymbols(symbols));
-		this.assureSymbols();
+		this.ensureSymbols();
 	}
 
 	// **************************************************
@@ -69,7 +70,7 @@ public final class DurationSymbols {
 	}
 	
 	private String[] extractSymbols(String symbols) {
-		String[] splitedSymbols = symbols.split("[-_/,* ]", (MAX_SYMBOLS  + 1));
+		String[] splitedSymbols = symbols.split(SYMBOL_SEPARATOR_PATTERN, (MAX_SYMBOLS  + 1));
 		
 		if(splitedSymbols.length > 1) {
 			return splitedSymbols;
@@ -92,12 +93,14 @@ public final class DurationSymbols {
 	}
 	
 	private void updateSymbols(String[] newSymbols) {
-		for (int i = 0; i < newSymbols.length; i++) {
+		int maxIterator = Math.min(newSymbols.length, MAX_SYMBOLS);
+		
+		for (int i = 0; i < maxIterator; i++) {
 			this.symbols.put(Units.values()[i], newSymbols[i]);
 		}
 	}
 	
-	private void assureSymbols() {
+	private void ensureSymbols() {
 		String[] symbolsReported = this.symbols.values().toArray(new String[0]);
 		for (int i = 0; i < (MAX_SYMBOLS - 1); i++) {
 			for(int j = (i + 1); j < MAX_SYMBOLS; j++) {

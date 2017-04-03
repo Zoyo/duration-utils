@@ -6,64 +6,83 @@ import br.com.rsystem.config.ConfigDuration;
 import br.com.rsystem.config.defaults.UnitBitValues;
 
 public enum Units {
-	YEAR(UnitBitValues.YEAR_MAX_BIT) {
+	YEAR(UnitBitValues.YEAR_BIT) {
 		@Override
 		Long getInMillis(final ConfigDuration config) {
 			return TimeUnit.MILLISECONDS.convert((config.getHoursInDay() * config.getDaysInYear()), TimeUnit.HOURS);
 		}
 	},
-	MONTH(UnitBitValues.MONTH_MAX_BIT) {
+	MONTH(UnitBitValues.MONTH_BIT) {
 		@Override
 		Long getInMillis(final ConfigDuration config) {
 			return TimeUnit.MILLISECONDS.convert((config.getHoursInDay() * config.getDaysInMonth()), TimeUnit.HOURS);
 		}
 	},
-	WEEK(UnitBitValues.WEEK_MAX_BIT) {
+	WEEK(UnitBitValues.WEEK_BIT) {
 		@Override
 		Long getInMillis(final ConfigDuration config) {
 			return TimeUnit.MILLISECONDS.convert((config.getHoursInDay() * config.getDaysInWeek()), TimeUnit.HOURS);
 		}
 	},
-	DAY(UnitBitValues.DAY_MAX_BIT) {
+	DAY(UnitBitValues.DAY_BIT) {
 		@Override
 		Long getInMillis(final ConfigDuration config) {
 			return TimeUnit.MILLISECONDS.convert(config.getHoursInDay(), TimeUnit.HOURS);
 		}
 	},
-	HOUR(UnitBitValues.HOUR_MAX_BIT) {
+	HOUR(UnitBitValues.HOUR_BIT) {
 		@Override
 		Long getInMillis(final ConfigDuration config) {
 			return TimeUnit.MILLISECONDS.convert(1L, TimeUnit.HOURS);
 		}
 	},
-	MINUTE(UnitBitValues.MINUTE_MAX_BIT) {
+	MINUTE(UnitBitValues.MINUTE_BIT) {
 		@Override
 		Long getInMillis(final ConfigDuration config) {
 			return TimeUnit.MILLISECONDS.convert(1L, TimeUnit.MINUTES);
 		}
 	},
-	SECOND(UnitBitValues.SECOND_MAX_BIT) {
+	SECOND(UnitBitValues.SECOND_BIT) {
 		@Override
 		Long getInMillis(final ConfigDuration config) {
 			return TimeUnit.MILLISECONDS.convert(1L, TimeUnit.SECONDS);
 		}
 	},
-	MILLISECOND(UnitBitValues.MILLISECOND_MAX_BIT) {
+	MILLISECOND(UnitBitValues.MILLISECOND_BIT) {
 		@Override
 		Long getInMillis(final ConfigDuration config) {
 			return 1L;
 		}
 	};
 	
-	private int valueForMaxUnit;
+	private int bitCode;
 	
-	private Units(int valueForMaxUnit) {
-		this.valueForMaxUnit = valueForMaxUnit;
+	private Units(int bitCode) {
+		this.bitCode = bitCode;
 	}
 	
-	public int valueForMaxUnit() {
-		return this.valueForMaxUnit;
+	public int bitCode() {
+		return this.bitCode;
 	}
 
 	abstract Long getInMillis(ConfigDuration config);
+	
+	public static Units getFromPredicate(String predicate) {
+		if(predicate == null) {
+			return null;
+		} else {
+			predicate = predicate.trim();
+		}
+		
+		for (Units u : values()) {
+			if(u.name().equalsIgnoreCase(predicate)
+			   || (u.getDeclaringClass().getName() + "." + u.name()).equalsIgnoreCase(predicate)
+			   || String.valueOf(u.bitCode()).equalsIgnoreCase(predicate)) {
+				
+				return u;
+			}
+		}
+		
+		return null;
+	}
 }

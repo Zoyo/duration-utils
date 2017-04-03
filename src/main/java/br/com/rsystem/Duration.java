@@ -118,60 +118,63 @@ public final class Duration {
 	}
 	
 	private String normalizeDuration(Long milliseconds) {
-		int bitForMaxUnit = config.getMaxUnit().valueForMaxUnit();
+		int unitsOn = config.getMaxUnit();
 		
 		long ms = milliseconds;
 		
 		Long totalYears = null;
-		if((UnitBitValues.YEAR_BIT & bitForMaxUnit) > 0) {
+		if((UnitBitValues.YEAR_BIT & unitsOn) > 0) {
 			Long yearInMillis = Units.YEAR.getInMillis(this.config);
 			totalYears = ms / yearInMillis;
 			ms -= (totalYears * yearInMillis);
 		}
 		
 		Long totalMonths = null;
-		if((UnitBitValues.MONTH_BIT & bitForMaxUnit) > 0) {
+		if((UnitBitValues.MONTH_BIT & unitsOn) > 0) {
 			Long monthInMillis = Units.MONTH.getInMillis(this.config);
 			totalMonths = ms / monthInMillis;
 			ms -= (totalMonths * monthInMillis);
 		}
 		
 		Long totalWeeks = null;
-		if((UnitBitValues.WEEK_BIT & bitForMaxUnit) > 0) {
+		if((UnitBitValues.WEEK_BIT & unitsOn) > 0) {
 			Long weekInMillis = Units.WEEK.getInMillis(this.config);
 			totalWeeks = ms / weekInMillis;
 			ms -= (totalWeeks * weekInMillis);
 		}
 		
 		Long totalDays = null;
-		if((UnitBitValues.DAY_BIT & bitForMaxUnit) > 0) {
+		if((UnitBitValues.DAY_BIT & unitsOn) > 0) {
 			Long dayInMillis = Units.DAY.getInMillis(this.config);
 			totalDays = ms / dayInMillis;
 			ms -= (totalDays * dayInMillis);
 		}
 		
 		Long totalHours = null;
-		if((UnitBitValues.HOUR_BIT & bitForMaxUnit) > 0) {
+		if((UnitBitValues.HOUR_BIT & unitsOn) > 0) {
 			Long hourInMillis = Units.HOUR.getInMillis(this.config);
 			totalHours = ms / hourInMillis;
 			ms -= (totalHours * hourInMillis);
 		}
 		
 		Long totalMinutes  = null;
-		if((UnitBitValues.MINUTE_BIT & bitForMaxUnit) > 0) {
+		if((UnitBitValues.MINUTE_BIT & unitsOn) > 0) {
 			Long minuteInMillis = Units.MINUTE.getInMillis(this.config);
 			totalMinutes = ms / minuteInMillis;
 			ms -= (totalMinutes * minuteInMillis);
 		}
 		
 		Long totalSeconds = null;
-		if((UnitBitValues.SECOND_BIT & bitForMaxUnit) > 0) {
+		if((UnitBitValues.SECOND_BIT & unitsOn) > 0) {
 			Long secondInMillis = Units.SECOND.getInMillis(this.config);
 			totalSeconds = ms / secondInMillis;
 			ms -= (totalSeconds * secondInMillis);
 		}
 		
-		Long totalMilliseconds = ms;
+		Long totalMilliseconds = null;
+		if((UnitBitValues.MILLISECOND_BIT & unitsOn) > 0) {
+			totalMilliseconds = ms;
+		}
 		
 		
 		StringBuilder durationText = new StringBuilder();
