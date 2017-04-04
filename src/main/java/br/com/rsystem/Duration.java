@@ -45,7 +45,7 @@ public final class Duration {
 		
 		this.totalMilliseconds = totalMilliseconds;
 		this.originalDuration = this.normalizeDuration(this.totalMilliseconds);
-		this.duration = this.normalizeDuration(this.totalMilliseconds);
+		this.duration = this.originalDuration;
 		this.unitsValues = new LinkedHashMap<Units, Long>(Units.values().length);
 		
 		setup(this.duration, this.config);
@@ -57,6 +57,20 @@ public final class Duration {
 	
 	public Duration(Long totalTime, Units unit, ConfigDuration config) {
 		this(totalTime * unit.getInMillis(config));
+	}
+	
+	public Duration(Calendar date) {
+		this(date, new ConfigDuration());
+	}
+	
+	public Duration(Calendar date, ConfigDuration config) {
+		this.config = config;
+		this.totalMilliseconds = date.getTimeInMillis() - Calendar.getInstance().getTimeInMillis() + 1000;
+		this.unitsValues = new LinkedHashMap<Units, Long>(Units.values().length);
+		this.originalDuration = this.normalizeDuration(this.totalMilliseconds);
+		this.duration = this.originalDuration;
+		setup(this.duration, this.config);
+		
 	}
 	
 	// **************************************************
@@ -97,7 +111,7 @@ public final class Duration {
 		plusDuration.add(Calendar.MILLISECOND, this.totalMilliseconds.intValue());
 		return plusDuration;
 	}
-
+	
 	// **************************************************
 	// Private methods
 	// **************************************************

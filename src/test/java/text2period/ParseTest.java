@@ -46,6 +46,16 @@ public class ParseTest {
 	}
 	
 	@Test
+	public void shouldReturnOneWeekTwoHourAndThirtyMinutesDuration() throws Exception {
+		Calendar date = Calendar.getInstance();
+		date.add(Calendar.DAY_OF_MONTH, 7);
+		date.add(Calendar.HOUR, 2);
+		date.add(Calendar.MINUTE, 30);
+		
+		Duration duration = new Duration(date);
+		assertEquals("Get duration one week, 2 hours and 30 minutes after now emits a problem", "1w 2h 30m", duration.getDuration());
+	}
+	@Test
 	public void shouldCreateDurationOnUnitSpecified() throws Exception {
 		Duration duration = new Duration(24L, Units.HOUR);
 		assertEquals("Duration from unit emits a problem", "1d", duration.getDuration());
