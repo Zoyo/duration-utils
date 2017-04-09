@@ -1,6 +1,7 @@
 package br.com.rsystem;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -77,8 +78,10 @@ public final class Duration {
 	// Public methods
 	// **************************************************
 	public Duration add(Duration duration) {
-		Long ms = duration.getTotalMilliseconds() + this.totalMilliseconds;
-		return new Duration(ms, this.config);
+		Map<Units, Long> acumulateUnits = this.acumulateUnits(duration.getUnitsValues());
+		Long millisAcumulated = this.unitsToMillis(acumulateUnits, this.config);
+		
+		return new Duration(millisAcumulated, this.config);
 	}
 	
 	public Duration add(String duration) {
@@ -137,59 +140,58 @@ public final class Duration {
 		long ms = milliseconds;
 		
 		Long totalYears = null;
-		if((UnitBitValues.YEAR_BIT & unitsOn) > 0) {
+		if((UnitBitValues.YEAR & unitsOn) > 0) {
 			Long yearInMillis = Units.YEAR.getInMillis(this.config);
 			totalYears = ms / yearInMillis;
 			ms -= (totalYears * yearInMillis);
 		}
 		
 		Long totalMonths = null;
-		if((UnitBitValues.MONTH_BIT & unitsOn) > 0) {
+		if((UnitBitValues.MONTH & unitsOn) > 0) {
 			Long monthInMillis = Units.MONTH.getInMillis(this.config);
 			totalMonths = ms / monthInMillis;
 			ms -= (totalMonths * monthInMillis);
 		}
 		
 		Long totalWeeks = null;
-		if((UnitBitValues.WEEK_BIT & unitsOn) > 0) {
+		if((UnitBitValues.WEEK & unitsOn) > 0) {
 			Long weekInMillis = Units.WEEK.getInMillis(this.config);
 			totalWeeks = ms / weekInMillis;
 			ms -= (totalWeeks * weekInMillis);
 		}
 		
 		Long totalDays = null;
-		if((UnitBitValues.DAY_BIT & unitsOn) > 0) {
+		if((UnitBitValues.DAY & unitsOn) > 0) {
 			Long dayInMillis = Units.DAY.getInMillis(this.config);
 			totalDays = ms / dayInMillis;
 			ms -= (totalDays * dayInMillis);
 		}
 		
 		Long totalHours = null;
-		if((UnitBitValues.HOUR_BIT & unitsOn) > 0) {
+		if((UnitBitValues.HOUR & unitsOn) > 0) {
 			Long hourInMillis = Units.HOUR.getInMillis(this.config);
 			totalHours = ms / hourInMillis;
 			ms -= (totalHours * hourInMillis);
 		}
 		
 		Long totalMinutes  = null;
-		if((UnitBitValues.MINUTE_BIT & unitsOn) > 0) {
+		if((UnitBitValues.MINUTE & unitsOn) > 0) {
 			Long minuteInMillis = Units.MINUTE.getInMillis(this.config);
 			totalMinutes = ms / minuteInMillis;
 			ms -= (totalMinutes * minuteInMillis);
 		}
 		
 		Long totalSeconds = null;
-		if((UnitBitValues.SECOND_BIT & unitsOn) > 0) {
+		if((UnitBitValues.SECOND & unitsOn) > 0) {
 			Long secondInMillis = Units.SECOND.getInMillis(this.config);
 			totalSeconds = ms / secondInMillis;
 			ms -= (totalSeconds * secondInMillis);
 		}
 		
 		Long totalMilliseconds = null;
-		if((UnitBitValues.MILLISECOND_BIT & unitsOn) > 0) {
+		if((UnitBitValues.MILLISECOND & unitsOn) > 0) {
 			totalMilliseconds = ms;
 		}
-		
 		
 		StringBuilder durationText = new StringBuilder();
 		
@@ -222,7 +224,7 @@ public final class Duration {
 		}
 		
 		if(totalMilliseconds != null && totalMilliseconds > 0) {
-			durationText.append(totalMilliseconds).append(this.config.getSymbols().getMillisecond()).append(this.config.getTextSeparator());
+			durationText.append(totalMilliseconds).append(this.config.getSymbols().getMillisecond());
 		}
 		
 		return durationText.toString().trim();
@@ -252,19 +254,50 @@ public final class Duration {
 		return msAcumulated;
 	}
 	
+	private Map<Units, Long> acumulateUnits(Map<Units, Long> forAcumulate) {
+		 Map<Units,Long> acumulatedValues = new LinkedHashMap<Units, Long>();
+		 
+		for (Entry<Units, Long> e : this.unitsValues.entrySet()) {
+			
+			Long valueForAcumulate = forAcumulate.get(e.getKey());
+			if(valueForAcumulate == null) {
+				valueForAcumulate = 0L;
+			}
+			
+			acumulatedValues.put(e.getKey(), e.getValue() + valueForAcumulate);
+		}
+		
+		return acumulatedValues;
+	}
+	
+	private Long unitsToMillis(Map<Units, Long> units, ConfigDuration config) {
+		Long totalMillis = 0L;
+		
+		for (Entry<Units, Long> e : units.entrySet()) {
+			Long valueOfUnit = e.getValue();
+			totalMillis += (valueOfUnit * e.getKey().getInMillis(config));
+		}
+		
+		return totalMillis;
+	}
+	
 	// **************************************************
 	// Default get/set
 	// **************************************************
 	public String getOriginalDuration() {
-		return this.originalDuration;
+		return new String(this.originalDuration);
 	}
 	
 	public String getDuration() {
-		return duration;
+		return new String(duration);
 	}
 	
 	public Long getTotalMilliseconds() {
-		return this.totalMilliseconds;
+		return new Long(this.totalMilliseconds);
+	}
+	
+	public Map<Units, Long> getUnitsValues() {
+		return Collections.unmodifiableMap(this.unitsValues);
 	}
 
 	// **************************************************
