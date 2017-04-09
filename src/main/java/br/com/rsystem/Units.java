@@ -6,49 +6,49 @@ import br.com.rsystem.config.ConfigDuration;
 import br.com.rsystem.config.defaults.UnitBitValues;
 
 public enum Units {
-	YEAR(UnitBitValues.YEAR_BIT) {
+	YEAR(UnitBitValues.YEAR) {
 		@Override
 		Long getInMillis(final ConfigDuration config) {
 			return TimeUnit.MILLISECONDS.convert((config.getHoursInDay() * config.getDaysInYear()), TimeUnit.HOURS);
 		}
 	},
-	MONTH(UnitBitValues.MONTH_BIT) {
+	MONTH(UnitBitValues.MONTH) {
 		@Override
 		Long getInMillis(final ConfigDuration config) {
 			return TimeUnit.MILLISECONDS.convert((config.getHoursInDay() * config.getDaysInMonth()), TimeUnit.HOURS);
 		}
 	},
-	WEEK(UnitBitValues.WEEK_BIT) {
+	WEEK(UnitBitValues.WEEK) {
 		@Override
 		Long getInMillis(final ConfigDuration config) {
 			return TimeUnit.MILLISECONDS.convert((config.getHoursInDay() * config.getDaysInWeek()), TimeUnit.HOURS);
 		}
 	},
-	DAY(UnitBitValues.DAY_BIT) {
+	DAY(UnitBitValues.DAY) {
 		@Override
 		Long getInMillis(final ConfigDuration config) {
 			return TimeUnit.MILLISECONDS.convert(config.getHoursInDay(), TimeUnit.HOURS);
 		}
 	},
-	HOUR(UnitBitValues.HOUR_BIT) {
+	HOUR(UnitBitValues.HOUR) {
 		@Override
 		Long getInMillis(final ConfigDuration config) {
 			return TimeUnit.MILLISECONDS.convert(1L, TimeUnit.HOURS);
 		}
 	},
-	MINUTE(UnitBitValues.MINUTE_BIT) {
+	MINUTE(UnitBitValues.MINUTE) {
 		@Override
 		Long getInMillis(final ConfigDuration config) {
 			return TimeUnit.MILLISECONDS.convert(1L, TimeUnit.MINUTES);
 		}
 	},
-	SECOND(UnitBitValues.SECOND_BIT) {
+	SECOND(UnitBitValues.SECOND) {
 		@Override
 		Long getInMillis(final ConfigDuration config) {
 			return TimeUnit.MILLISECONDS.convert(1L, TimeUnit.SECONDS);
 		}
 	},
-	MILLISECOND(UnitBitValues.MILLISECOND_BIT) {
+	MILLISECOND(UnitBitValues.MILLISECOND) {
 		@Override
 		Long getInMillis(final ConfigDuration config) {
 			return 1L;
