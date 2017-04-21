@@ -77,23 +77,31 @@ public final class Duration {
 	// **************************************************
 	// Public methods
 	// **************************************************
-	public Duration add(Duration duration) {
-		Map<Units, Long> acumulateUnits = this.acumulateUnits(duration.getUnitsValues());
+	public Duration add(Duration durationToAdd) {
+		Map<Units, Long> acumulateUnits = this.acumulateUnits(durationToAdd.getUnitsValues());
 		Long millisAcumulated = this.unitsToMillis(acumulateUnits, this.config);
 		
 		return new Duration(millisAcumulated, this.config);
 	}
 	
-	public Duration add(String duration) {
-		return new Duration(duration, this.config).add(this);
+	public Duration add(String durationToAdd) {
+		return new Duration(durationToAdd, this.config).add(this);
 	}
 	
-	public Duration add(Long milliseconds) {
-		return new Duration(milliseconds, this.config).add(this);
+	public Duration add(Long millisecondsToAdd) {
+		return new Duration(millisecondsToAdd, this.config).add(this);
 	}
 	
-	public Long toSeconds() {
-		return this.totalMilliseconds / Units.SECOND.getInMillis(this.config);
+	public Duration subtract(Duration durationToSubtract) {
+		return new Duration((this.totalMilliseconds - durationToSubtract.getTotalMilliseconds()), this.config);
+	}
+	
+	public Duration subtract(String durationToSubtract) {
+		return this.subtract(new Duration(durationToSubtract, this.config));
+	}
+	
+	public Duration subtract(Long durationToSubtract) {
+		return this.subtract(new Duration(durationToSubtract, this.config));
 	}
 	
 	public Calendar getDateFromDuration() {

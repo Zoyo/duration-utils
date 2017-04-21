@@ -1,6 +1,9 @@
 package text2period;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -17,18 +20,6 @@ import br.com.rsystem.config.ConfigDuration;
 import br.com.rsystem.config.DurationSymbols;
 
 public class ParseTest {
-	@Test
-	public void shouldReturnOneHourInSeconds() throws Exception {
-		Duration duration = new Duration("1h");
-		assertEquals("1h in seconds emit a problem", (Long)3600L, duration.toSeconds());
-	}
-	
-	@Test
-	public void shouldConverterOneWeekInSeconds() throws Exception {
-		Duration duration = new Duration("1w");
-		assertEquals("1w in seconds emit a problem", (Long)604800L, duration.toSeconds());
-	}
-	
 	@Test
 	public void shouldNormalizeTextDuration() throws Exception {
 		Duration duration = new Duration("1w 14d 1h");
@@ -105,6 +96,14 @@ public class ParseTest {
 		assertFalse("Load unit minute emits a problem", config.getUseUnits().contains(Units.MINUTE));
 		assertTrue("Load unit second emits a problem", config.getUseUnits().contains(Units.SECOND));
 		assertFalse("Load unit millisecond emits a problem", config.getUseUnits().contains(Units.MILLISECOND));
+	}
+	
+	@Test
+	public void shouldSubtractDuration() throws Exception {
+		Duration d1 = new Duration("1w 2d 3h");
+		Duration d2 = new Duration("1d 2h");
+		
+		assertEquals("Subtraction duration emits a problem", "1w 1d 1h", d1.subtract(d2).getDuration());
 	}
 	
 	@Test
