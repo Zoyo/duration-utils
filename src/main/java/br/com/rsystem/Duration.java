@@ -135,7 +135,7 @@ public final class Duration {
 	}
 	
 	private String normalizeDuration(Long milliseconds) {
-		int unitsOn = config.getMaxUnit();
+		int unitsOn = config.getUnitsOn();
 		
 		long ms = milliseconds;
 		

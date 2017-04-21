@@ -47,12 +47,12 @@ public final class ConfigDuration {
 		return this.symbols.getUnitFromSymbol(symbol);
 	}
 
-	public int getMaxUnit() {
-		int maxUnit = 0;
+	public int getUnitsOn() {
+		int unitsOn = 0;
 		for(Units u : this.useUnits) {
-			maxUnit |= u.bitCode();
+			unitsOn |= u.bitCode();
 		}
-		return maxUnit;
+		return unitsOn;
 	}
 
 	// **************************************************
